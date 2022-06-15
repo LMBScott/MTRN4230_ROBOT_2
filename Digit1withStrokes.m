@@ -37,7 +37,7 @@ arc1 = [-593.53, -130.80, 65, 2.2214, -2.2214, 0.00];
 arc2 = [-567.53, -130.80, 65, 2.2214, -2.2214, 0.00];
 
 % Play around with these values for movec. 
-a = 0.1;    % Tool Acceleration
+a = 0.05;    % Tool Acceleration
 v = 0.01;   % Tool Velocity
 r = 0;      % Blend radius
 

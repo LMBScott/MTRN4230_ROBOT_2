@@ -38,7 +38,7 @@ point1 = [0,0,0];
 point2 = [100,0,0];
 point3 = [100,100,0];
 point4 = [0,100,0];
-
+ 
 % How do we draw a square in the paper's frame of reference?
 % We translate it up to the Paper's reference
 poses = rtde.movej(home);
