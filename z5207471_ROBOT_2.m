@@ -7,11 +7,8 @@ function z5207471_ROBOT_2(paperPos, digits)
     CHAR_HEIGHT = 22;  % Character height in millimeters
     CHAR_TOP_PADDING = 3;
     PLANE_Z_OFFSET = 60;    % Z-offset of flange from work plane in millimeters
-    SAFE_PAPER_OFFSET = 10; % Safe z-offset of TCP from work plane in millimeters
-
-    TOOL_ACC = 0.05;    % Tool Acceleration
-    TOOL_VEL = 0.01;   % Tool Velocity
-    BLEND_R = 0;      % Blend radius
+    PAPER_MARGIN = 30;
+    Z_CLEARANCE = 10; % Safe z-offset of TCP from work plane in millimeters
 
     if (~exist('paperPos', 'var'))
         paperPos = DEFAULT_PAPER_POS;
@@ -35,28 +32,30 @@ function z5207471_ROBOT_2(paperPos, digits)
     PLANE_Z_OFFSET = 60;   % Z-offset of TCP from work plane in millimeters 
 
     rot = rotz(paperPos(3), 'deg');
-
-    home = [ paperPos(1), paperPos(2), PLANE_Z_OFFSET + SAFE_PAPER_OFFSET ];
+    
+    home = [ paperPos(1), paperPos(2), PLANE_Z_OFFSET + Z_CLEARANCE ];
 
     currPos = home;
-    nextPos = home;
+    nextPos = [ currPos(1), currPos(2) + PAPER_MARGIN, currPos(3)];
 
     poses = ur5.movel([ currPos, TOOL_DOWN_POSE ]);
 
     for i = 1 : strlength(digits)
         switch digits(i)
             case '0'
-                nextPos = [ currPos(1) + 3, currPos(2) + CHAR_WIDTH / 2, currPos(3)] * rot;
-                arc = getZArcPoint(currPos, nextPos, SAFE_PAPER_OFFSET) * rot;
+                nextPos = [ nextPos(1) + 3, nextPos(2) + CHAR_WIDTH / 2, nextPos(3)] * rot;
+                arc = getZArcPoint(currPos, nextPos, Z_CLEARANCE) * rot;
                 poses = moveC(ur5, poses, arc, nextPos);
                 currPos = nextPos;
                 nextPos(1) = nextPos(1) - CHAR_HEIGHT;
-                arc = getYArcPoint(currPos, nextPos, 7);
+                arc = getYArcPoint(currPos, nextPos, 7) * rot;
                 poses = moveC(ur5, poses, arc, nextPos);
                 currPos = nextPos;
                 nextPos(1) = nextPos(1) + CHAR_HEIGHT;
-                arc = getYArcPoint(currPos, nextPos, -7);
+                arc = getYArcPoint(currPos, nextPos, -7) * rot;
                 poses = moveC(ur5, poses, arc, nextPos);
+                currPos = nextPos;
+                nextPos(2) = nextPos(2) + CHAR_WIDTH / 2;
             case '1'
                 
             case '2'
@@ -96,7 +95,7 @@ end
 
 function newPoses = moveC(ur5, poses, p2, p3)
     TOOL_DOWN_POSE = [2.2214, -2.2214, 0.00];
-    TOOL_ACC = 0.1;    % Tool Acceleration
+    TOOL_ACC = 0.05;    % Tool Acceleration
     TOOL_VEL = 0.01;   % Tool Velocity
     BLEND_R = 0;      % Blend radius
 
