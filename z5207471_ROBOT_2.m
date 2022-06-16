@@ -1,3 +1,6 @@
+% MTRN4230 ROBOT-2 Assessment
+% Author: Lachlan Scott, z5207471
+
 function z5207471_ROBOT_2(paperPos, digits)
     clear all;
 
@@ -24,10 +27,6 @@ function z5207471_ROBOT_2(paperPos, digits)
     host = '127.0.0.1';
     port = 30003;
     ur5 = rtde(host, port);
-    
-    CHAR_WIDTH = 0.0195; % Character width in meters
-    CHAR_HEIGHT = 0.032; % Character height in meters
-    PLANE_Z_OFFSET = 60; % Z-offset of TCP from work plane in millimeters 
 
     rot = rotz(paperPos(3), 'deg');
     
