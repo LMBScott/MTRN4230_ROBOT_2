@@ -2,9 +2,11 @@
 % Author: Lachlan Scott, z5207471
 
 function z5207471_ROBOT_2(paperPos, digits)
-    clear all;
+    arguments
+        paperPos (1,3) double = [-588.53, -133.30, 0]
+        digits (1,:) char = '0123456789'
+    end
 
-    DEFAULT_PAPER_POS = [-588.53, -133.30, 0];
     TOOL_DOWN_POSE = [2.2214, -2.2214, 0.00];
     CHAR_WIDTH = 19.5;    % Character width in millimeters
     CHAR_HEIGHT = 22;     % Character height in millimeters
@@ -14,15 +16,9 @@ function z5207471_ROBOT_2(paperPos, digits)
     PAPER_MARGIN = 30;
     Z_CLEARANCE = 10;     % Safe z-offset of TCP from work plane in millimeters
 
-    if (~exist('paperPos', 'var'))
-        paperPos = DEFAULT_PAPER_POS;
-    end
+    disp("Paper position: " + paperPos);
 
-    if (~exist('digits', 'var'))
-        digits = '0123456789';
-    end
-
-    disp('Printing these digits: ' + digits);
+    disp("Writing these digits: " + digits);
 
     host = '127.0.0.1';
     port = 30003;
@@ -39,6 +35,7 @@ function z5207471_ROBOT_2(paperPos, digits)
     poses = ur5.movel([ currPos, TOOL_DOWN_POSE ]);
 
     for i = 1 : strlength(digits)
+        disp("Now writing: " + digits(i));
         switch digits(i)
             case '0'
                 % Move to top of zero
@@ -47,12 +44,12 @@ function z5207471_ROBOT_2(paperPos, digits)
                 poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw RHS of zero
                 currPos = nextPos;
-                nextPos(1) = nextPos(1) - CHAR_HEIGHT;
+                nextPos(1) = nextPos(1) + CHAR_HEIGHT;
                 arc = getYArcPoint(currPos, nextPos, CHAR_WIDTH / 2 - CHAR_SIDE_PADDING);
                 poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw LHS of zero
                 currPos = nextPos;
-                nextPos(1) = nextPos(1) + CHAR_HEIGHT;
+                nextPos(1) = nextPos(1) - CHAR_HEIGHT;
                 arc = getYArcPoint(currPos, nextPos, CHAR_SIDE_PADDING - CHAR_WIDTH / 2);
                 poses = moveC(ur5, poses, rot, arc, nextPos);
             case '1'
@@ -84,7 +81,7 @@ function z5207471_ROBOT_2(paperPos, digits)
                 nextPos = [ nextPos(1) - CHAR_HEIGHT * 0.125, nextPos(2) + CHAR_WIDTH * 0.6, nextPos(3) ];
                 poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw angled line of two
-                nextPos(1) = charEdgePos + CHAR_HEIGHT + CHAR_TOP_PADDING;
+                nextPos(1) = charEdgePos(1) + CHAR_HEIGHT + CHAR_TOP_PADDING;
                 poses = moveL(ur5, poses, rot, nextPos);
                 % Draw horizontal line of two
                 nextPos(2) = nextPos(2) + CHAR_WIDTH - 2 * CHAR_SIDE_PADDING;
@@ -199,7 +196,6 @@ function z5207471_ROBOT_2(paperPos, digits)
                 arc = getYArcPoint(currPos, nextPos, CHAR_SIDE_PADDING - CHAR_WIDTH / 2);
                 poses = moveC(ur5, poses, rot, arc, nextPos);
             case '9'
-            otherwise
                 % Move to middle right of nine
                 nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING + CHAR_HEIGHT / 2, charEdgePos(2) + CHAR_WIDTH - 2 * CHAR_SIDE_PADDING, charEdgePos(3)];
                 arc = getZArcPoint(currPos, nextPos, Z_CLEARANCE);
@@ -222,7 +218,7 @@ function z5207471_ROBOT_2(paperPos, digits)
         currPos = nextPos;
 
         % Shift character edge position to edge of next character
-        charEdgePos = charEdgePos + CHAR_WIDTH;
+        charEdgePos(2) = charEdgePos(2) + CHAR_WIDTH;
     end
 
     ur5.drawPath(poses);
@@ -242,8 +238,8 @@ end
 
 function newPoses = moveC(ur5, poses, rotation, p2, p3)
     TOOL_DOWN_POSE = [2.2214, -2.2214, 0.00];
-    TOOL_ACC = 0.05; % Tool Acceleration
-    TOOL_VEL = 0.01; % Tool Velocity
+    TOOL_ACC = 0.08; % Tool Acceleration
+    TOOL_VEL = 0.08; % Tool Velocity
     BLEND_R = 0.01;     % Blend radius
 
     newPoses = cat(1, poses, ur5.movec([ p2 * rotation, TOOL_DOWN_POSE ], [ p3 * rotation, TOOL_DOWN_POSE ], 'pose', TOOL_ACC, TOOL_VEL, BLEND_R));
