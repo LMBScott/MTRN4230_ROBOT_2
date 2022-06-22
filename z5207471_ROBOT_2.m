@@ -25,6 +25,7 @@ function z5207471_ROBOT_2(paperPose, digits)
     ur5 = rtde(host, port);
 
     rot = rotz(paperPose(3), 'deg');
+    invRot = rotz(-paperPose(3), 'deg');
     
     homePos = [ paperPose(1), paperPose(2), PLANE_Z_OFFSET + Z_CLEARANCE ];
 
@@ -47,12 +48,12 @@ function z5207471_ROBOT_2(paperPose, digits)
                 currPos = nextPos;
                 nextPos(1) = nextPos(1) + CHAR_HEIGHT;
                 arc = getYArcPoint(currPos, nextPos, CHAR_WIDTH / 2 - CHAR_SIDE_PADDING);
-                poses = moveC(ur5, poses, -rot, arc, nextPos);
+                poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw LHS of zero
                 currPos = nextPos;
                 nextPos(1) = nextPos(1) - CHAR_HEIGHT;
                 arc = getYArcPoint(currPos, nextPos, CHAR_SIDE_PADDING - CHAR_WIDTH / 2);
-                poses = moveC(ur5, poses, -rot, arc, nextPos);
+                poses = moveC(ur5, poses, rot, arc, nextPos);
             case '1'
                 % Move to bottom of angled line of one
                 nextPos = [ charEdgePos(1) + CHAR_HEIGHT * 0.125 + CHAR_TOP_PADDING, charEdgePos(2) + CHAR_SIDE_PADDING, PLANE_Z_OFFSET];
@@ -60,48 +61,48 @@ function z5207471_ROBOT_2(paperPose, digits)
                 poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw angled line of one
                 nextPos = [ nextPos(1) - CHAR_HEIGHT * 0.125, nextPos(2) + CHAR_WIDTH / 2 - CHAR_SIDE_PADDING, nextPos(3) ];
-                poses = moveL(ur5, poses, -rot, nextPos);
+                poses = moveL(ur5, poses, rot, nextPos);
                 % Draw vertical line of one
                 nextPos(1) = nextPos(1) + CHAR_HEIGHT;
-                poses = moveL(ur5, poses, -rot, nextPos);
+                poses = moveL(ur5, poses, rot, nextPos);
                 % Move to left of horizontal line of one
                 currPos = nextPos;
                 nextPos(2) = nextPos(2) - CHAR_WIDTH / 2 + CHAR_SIDE_PADDING;
                 arc = getZArcPoint(currPos, nextPos, Z_CLEARANCE);
-                poses = moveC(ur5, poses, -rot, arc, nextPos);
+                poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw horizontal line of one
                 nextPos(2) = nextPos(2) + CHAR_WIDTH - 2 * CHAR_SIDE_PADDING;
-                poses = moveL(ur5, poses, -rot, nextPos);
+                poses = moveL(ur5, poses, rot, nextPos);
             case '2'
                 % Move to edge of upper curve of two
-                nextPos = [ charEdgePos(1) + CHAR_HEIGHT * 0.125 + CHAR_TOP_PADDING, charEdgePos(2) + CHAR_SIDE_PADDING, PLANE_Z_OFFSET];
+                nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING, charEdgePos(2) + CHAR_SIDE_PADDING, PLANE_Z_OFFSET];
                 arc = getZArcPoint(currPos, nextPos, Z_CLEARANCE);
                 poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw upper curve of two
-                arc = [ nextPos(1) - CHAR_HEIGHT * 0.125, nextPos(2) + CHAR_WIDTH * 0.75, nextPos(3) ];
-                nextPos = [ nextPos(1) - CHAR_HEIGHT * 0.125, nextPos(2) + CHAR_WIDTH * 0.6, nextPos(3) ];
-                poses = moveC(ur5, poses, -rot, arc, nextPos);
+                arc = [ charEdgePos(1) + CHAR_TOP_PADDING + 0.1 * CHAR_HEIGHT, charEdgePos(2) + 0.5 * CHAR_WIDTH, nextPos(3) ];
+                nextPos = [ charEdgePos(1) + 0.45 * CHAR_HEIGHT, charEdgePos(2) + 0.75 * CHAR_WIDTH, nextPos(3) ];
+                poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw angled line of two
                 nextPos = [ charEdgePos(1) + CHAR_HEIGHT + CHAR_TOP_PADDING, charEdgePos(2) + CHAR_SIDE_PADDING, PLANE_Z_OFFSET ];
-                poses = moveL(ur5, poses, -rot, nextPos);
+                poses = moveL(ur5, poses, rot, nextPos);
                 % Draw horizontal line of two
                 nextPos(2) = nextPos(2) + CHAR_WIDTH - 2 * CHAR_SIDE_PADDING;
-                poses = moveL(ur5, poses, -rot, nextPos);
+                poses = moveL(ur5, poses, rot, nextPos);
             case '3'
                 % Move to edge of upper curve of three
-                nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING + 3, charEdgePos(2) + CHAR_SIDE_PADDING, PLANE_Z_OFFSET];
+                nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING, charEdgePos(2) + CHAR_SIDE_PADDING, PLANE_Z_OFFSET];
                 arc = getZArcPoint(currPos, nextPos, Z_CLEARANCE);
                 poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw upper curve of three
                 currPos = nextPos;
                 nextPos(1) = nextPos(1) + CHAR_HEIGHT / 2;
                 arc = getYArcPoint(currPos, nextPos, CHAR_WIDTH - 2 * CHAR_SIDE_PADDING);
-                poses = moveC(ur5, poses, -rot, arc, nextPos);
+                poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw lower curve of three
                 currPos = nextPos;
                 nextPos(1) = nextPos(1) + CHAR_HEIGHT / 2;
                 arc = getYArcPoint(currPos, nextPos, CHAR_WIDTH - 2 * CHAR_SIDE_PADDING);
-                poses = moveC(ur5, poses, -rot, arc, nextPos);
+                poses = moveC(ur5, poses, rot, arc, nextPos);
             case '4'
                 % Move to top of four
                 nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING, charEdgePos(2) + CHAR_WIDTH * 0.75, PLANE_Z_OFFSET];
@@ -109,18 +110,18 @@ function z5207471_ROBOT_2(paperPose, digits)
                 poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw angled line of four
                 nextPos = [ charEdgePos(1) + CHAR_HEIGHT * 0.6, charEdgePos(2) + CHAR_SIDE_PADDING, PLANE_Z_OFFSET ];
-                poses = moveL(ur5, poses, -rot, nextPos);
+                poses = moveL(ur5, poses, rot, nextPos);
                 % Draw horizontal line of four
                 nextPos(2) = nextPos(2) + CHAR_WIDTH - 2 * CHAR_SIDE_PADDING;
-                poses = moveL(ur5, poses, -rot, nextPos);
+                poses = moveL(ur5, poses, rot, nextPos);
                 % Move to top of four
                 currPos = nextPos;
                 nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING, charEdgePos(2) + CHAR_WIDTH * 0.75, PLANE_Z_OFFSET];
                 arc = getZArcPoint(currPos, nextPos, Z_CLEARANCE);
-                poses = moveC(ur5, poses, -rot, arc, nextPos);
+                poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw vertical line of four
                 nextPos(1) = nextPos(1) + CHAR_HEIGHT;
-                poses = moveL(ur5, poses, -rot, nextPos);
+                poses = moveL(ur5, poses, rot, nextPos);
             case '5'
                 % Move to top of vertical line of five
                 nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING, charEdgePos(2) + CHAR_SIDE_PADDING, PLANE_Z_OFFSET];
@@ -128,38 +129,40 @@ function z5207471_ROBOT_2(paperPose, digits)
                 poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw vertical line of five
                 nextPos = [ nextPos(1) + CHAR_HEIGHT / 2, nextPos(2), nextPos(3) ];
-                poses = moveL(ur5, poses, -rot, nextPos);
+                poses = moveL(ur5, poses, rot, nextPos);
                 % Draw curve of five
                 currPos = nextPos;
                 nextPos = [ nextPos(1) + CHAR_HEIGHT / 2, nextPos(2), nextPos(3) ];
                 arc = getYArcPoint(currPos, nextPos, CHAR_WIDTH - 2 * CHAR_SIDE_PADDING);
-                poses = moveC(ur5, poses, -rot, arc, nextPos);
+                poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Move to top of vertical line of five
                 currPos = nextPos;
                 nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING, charEdgePos(2) + CHAR_SIDE_PADDING, PLANE_Z_OFFSET];
                 arc = getZArcPoint(currPos, nextPos, Z_CLEARANCE);
-                poses = moveC(ur5, poses, -rot, arc, nextPos);
+                poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw horizontal line of five
                 nextPos(2) = nextPos(2) + CHAR_WIDTH - 2 * CHAR_SIDE_PADDING;
-                poses = moveL(ur5, poses, -rot, nextPos);
+                poses = moveL(ur5, poses, rot, nextPos);
             case '6'
                 % Move to middle left of six
-                nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING + CHAR_HEIGHT / 2, charEdgePos(2) + CHAR_SIDE_PADDING, PLANE_Z_OFFSET];
+                nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING + 0.75 * CHAR_HEIGHT, charEdgePos(2) + CHAR_SIDE_PADDING, PLANE_Z_OFFSET];
                 arc = getZArcPoint(currPos, nextPos, Z_CLEARANCE);
                 poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw inner curve of six
                 currPos = nextPos;
-                nextPos = [ nextPos(1) + CHAR_HEIGHT / 2, nextPos(2) + CHAR_WIDTH / 2, nextPos(3) ];
-                arc = [ currPos(1) + 0.2 * CHAR_HEIGHT, currPos(2) + CHAR_WIDTH - 2 * CHAR_SIDE_PADDING, currPos(3) ];
-                poses = moveC(ur5, poses, -rot, arc, nextPos);
+                nextPos(2) = nextPos(2) + CHAR_WIDTH - 2 * CHAR_SIDE_PADDING;
+                arc = getXArcPoint(currPos, nextPos, -CHAR_HEIGHT / 4);
+                poses = moveC(ur5, poses, rot, arc, nextPos);
+                % Draw bottom curve of six
+                currPos = nextPos;
+                nextPos(2) = nextPos(2) - CHAR_WIDTH + 2 * CHAR_SIDE_PADDING;
+                arc = getXArcPoint(currPos, nextPos, CHAR_HEIGHT / 4);
+                poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw outer curve of six
                 currPos = nextPos;
-                nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING, charEdgePos(2) + CHAR_SIDE_PADDING + CHAR_WIDTH / 2, PLANE_Z_OFFSET ];
-                arc = getYArcPoint(currPos, nextPos, CHAR_SIDE_PADDING - CHAR_WIDTH / 2);
-                poses = moveC(ur5, poses, -rot, arc, nextPos);
-                % Draw top trailing edge of six
-                nextPos = [ nextPos(1), charEdgePos(2) + CHAR_WIDTH - CHAR_SIDE_PADDING, PLANE_Z_OFFSET];
-                poses = moveL(ur5, poses, -rot, nextPos);
+                nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING, charEdgePos(2) + CHAR_WIDTH - CHAR_SIDE_PADDING, PLANE_Z_OFFSET ];
+                arc = [ nextPos(1) + CHAR_HEIGHT / 4, nextPos(2) - CHAR_WIDTH / 3, PLANE_Z_OFFSET ];
+                poses = moveC(ur5, poses, rot, arc, nextPos);
             case '7'
                 % Move to edge of horizontal line of seven
                 nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING, charEdgePos(2) + CHAR_SIDE_PADDING, PLANE_Z_OFFSET];
@@ -167,10 +170,10 @@ function z5207471_ROBOT_2(paperPose, digits)
                 poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw horizontal line of seven
                 nextPos(2) = nextPos(2) + CHAR_WIDTH - 2 * CHAR_SIDE_PADDING;
-                poses = moveL(ur5, poses, -rot, nextPos);
+                poses = moveL(ur5, poses, rot, nextPos);
                 % Draw angled line of seven
                 nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING + CHAR_HEIGHT, charEdgePos(2) + CHAR_SIDE_PADDING, PLANE_Z_OFFSET];
-                poses = moveL(ur5, poses, -rot, nextPos);
+                poses = moveL(ur5, poses, rot, nextPos);
             case '8'
                 % Move to top of eight
                 nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING, charEdgePos(2) + CHAR_WIDTH / 2, PLANE_Z_OFFSET];
@@ -180,40 +183,42 @@ function z5207471_ROBOT_2(paperPose, digits)
                 currPos = nextPos;
                 nextPos(1) = nextPos(1) + CHAR_HEIGHT / 2;
                 arc = getYArcPoint(currPos, nextPos, CHAR_WIDTH / 2 - CHAR_SIDE_PADDING);
-                poses = moveC(ur5, poses, -rot, arc, nextPos);
+                poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw lower right curve of eight
                 currPos = nextPos;
                 nextPos(1) = nextPos(1) + CHAR_HEIGHT / 2;
                 arc = getYArcPoint(currPos, nextPos, CHAR_WIDTH / 2 - CHAR_SIDE_PADDING);
-                poses = moveC(ur5, poses, -rot, arc, nextPos);
+                poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw lower left curve of eight
                 currPos = nextPos;
                 nextPos(1) = nextPos(1) - CHAR_HEIGHT / 2;
                 arc = getYArcPoint(currPos, nextPos, CHAR_SIDE_PADDING - CHAR_WIDTH / 2);
-                poses = moveC(ur5, poses, -rot, arc, nextPos);
+                poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw upper left curve of eight
                 currPos = nextPos;
                 nextPos(1) = nextPos(1) - CHAR_HEIGHT / 2;
                 arc = getYArcPoint(currPos, nextPos, CHAR_SIDE_PADDING - CHAR_WIDTH / 2);
-                poses = moveC(ur5, poses, -rot, arc, nextPos);
+                poses = moveC(ur5, poses, rot, arc, nextPos);
             case '9'
                 % Move to middle right of nine
-                nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING + CHAR_HEIGHT / 2, charEdgePos(2) + CHAR_WIDTH - CHAR_SIDE_PADDING, PLANE_Z_OFFSET];
+                nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING + 0.25 * CHAR_HEIGHT, charEdgePos(2) + CHAR_WIDTH - CHAR_SIDE_PADDING, PLANE_Z_OFFSET];
                 arc = getZArcPoint(currPos, nextPos, Z_CLEARANCE);
                 poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw inner curve of nine
                 currPos = nextPos;
-                nextPos = [ nextPos(1) - CHAR_HEIGHT / 2, nextPos(2) - CHAR_WIDTH / 2, nextPos(3) ];
-                arc = [ currPos(1) - 0.2 * CHAR_HEIGHT, currPos(2) - CHAR_WIDTH - 2 * CHAR_SIDE_PADDING, currPos(3) ];
-                poses = moveC(ur5, poses, -rot, arc, nextPos);
+                nextPos(2) = nextPos(2) - CHAR_WIDTH + 2 * CHAR_SIDE_PADDING;
+                arc = getXArcPoint(currPos, nextPos, CHAR_HEIGHT / 4);
+                poses = moveC(ur5, poses, rot, arc, nextPos);
+                % Draw top curve of nine
+                currPos = nextPos;
+                nextPos(2) = nextPos(2) + CHAR_WIDTH - 2 * CHAR_SIDE_PADDING;
+                arc = getXArcPoint(currPos, nextPos, -CHAR_HEIGHT / 4);
+                poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw outer curve of nine
                 currPos = nextPos;
-                nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING + CHAR_HEIGHT, charEdgePos(2) + CHAR_WIDTH / 2, PLANE_Z_OFFSET ];
-                arc = getYArcPoint(currPos, nextPos, CHAR_WIDTH / 2 - CHAR_SIDE_PADDING);
-                poses = moveC(ur5, poses, -rot, arc, nextPos);
-                % Draw bottom trailing edge of nine
-                nextPos = [ nextPos(1), charEdgePos(2) + CHAR_SIDE_PADDING, PLANE_Z_OFFSET];
-                poses = moveL(ur5, poses, -rot, nextPos);
+                nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING + CHAR_HEIGHT, charEdgePos(2) + CHAR_SIDE_PADDING, PLANE_Z_OFFSET ];
+                arc = [ nextPos(1) - CHAR_HEIGHT / 4, nextPos(2) + CHAR_WIDTH / 3, PLANE_Z_OFFSET ];
+                poses = moveC(ur5, poses, rot, arc, nextPos);
         end
 
         currPos = nextPos;
@@ -243,7 +248,7 @@ function newPoses = moveC(ur5, poses, rotation, p2, p3)
     TOOL_DOWN_POSE = [2.2214, -2.2214, 0.00];
     TOOL_ACC = 0.08; % Tool Acceleration
     TOOL_VEL = 0.08; % Tool Velocity
-    BLEND_R = 0.005; % Blend radius
+    BLEND_R = 0.001; % Blend radius
     disp("Circular move: point 2: " + p2(1) + ", " + p2(2) + ", " + p2(3) + " point 3: " + p3(1) + ", " + p3(2) + ", " + p3(3));
 
     newPoses = cat(1, poses, ur5.movec([ p2 * rotation, TOOL_DOWN_POSE ], [ p3 * rotation, TOOL_DOWN_POSE ], 'pose', TOOL_ACC, TOOL_VEL, BLEND_R));
