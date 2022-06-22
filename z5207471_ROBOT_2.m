@@ -13,7 +13,9 @@ function z5207471_ROBOT_2(paperPose, digits)
     CHAR_TOP_PADDING = 3;
     CHAR_SIDE_PADDING = 5;
     PLANE_Z_OFFSET = 60;  % Z-offset of flange from work plane in millimeters
-    PAPER_MARGIN = 30;
+    PAPER_WIDTH = 210;
+    PAPER_HEIGHT = 297;
+    PAPER_MARGIN = 27;
     Z_CLEARANCE = 10;     % Safe z-offset of TCP from work plane in millimeters
 
     disp("Paper position: " + paperPose(1) + ", " + paperPose(2) + ", Rotation: " + paperPose(3));
@@ -27,13 +29,13 @@ function z5207471_ROBOT_2(paperPose, digits)
     rot = rotz(paperPose(3), 'deg');
     invRot = rotz(-paperPose(3), 'deg');
     
-    homePos = [ paperPose(1), paperPose(2), PLANE_Z_OFFSET + Z_CLEARANCE ];
+    homePos = [ paperPose(1) - PAPER_WIDTH, paperPose(2), PLANE_Z_OFFSET + Z_CLEARANCE ];
 
     poses = moveL(ur5, [], rot, homePos);
 
     currPos = homePos;
     nextPos = [];
-    charEdgePos = [ currPos(1), currPos(2) + PAPER_MARGIN, PLANE_Z_OFFSET];
+    charEdgePos = [ currPos(1) + PAPER_MARGIN, currPos(2) + PAPER_MARGIN, PLANE_Z_OFFSET];
 
     for i = 1 : strlength(digits)
         disp("Now writing: " + digits(i));
@@ -184,15 +186,15 @@ function z5207471_ROBOT_2(paperPose, digits)
                 nextPos(1) = nextPos(1) + CHAR_HEIGHT / 2;
                 arc = getYArcPoint(currPos, nextPos, CHAR_WIDTH / 2 - CHAR_SIDE_PADDING);
                 poses = moveC(ur5, poses, rot, arc, nextPos);
-                % Draw lower right curve of eight
-                currPos = nextPos;
-                nextPos(1) = nextPos(1) + CHAR_HEIGHT / 2;
-                arc = getYArcPoint(currPos, nextPos, CHAR_WIDTH / 2 - CHAR_SIDE_PADDING);
-                poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw lower left curve of eight
                 currPos = nextPos;
-                nextPos(1) = nextPos(1) - CHAR_HEIGHT / 2;
+                nextPos(1) = nextPos(1) + CHAR_HEIGHT / 2;
                 arc = getYArcPoint(currPos, nextPos, CHAR_SIDE_PADDING - CHAR_WIDTH / 2);
+                poses = moveC(ur5, poses, rot, arc, nextPos);
+                % Draw lower right curve of eight
+                currPos = nextPos;
+                nextPos(1) = nextPos(1) - CHAR_HEIGHT / 2;
+                arc = getYArcPoint(currPos, nextPos, CHAR_WIDTH / 2 - CHAR_SIDE_PADDING);
                 poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw upper left curve of eight
                 currPos = nextPos;
@@ -204,18 +206,17 @@ function z5207471_ROBOT_2(paperPose, digits)
                 nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING + 0.25 * CHAR_HEIGHT, charEdgePos(2) + CHAR_WIDTH - CHAR_SIDE_PADDING, PLANE_Z_OFFSET];
                 arc = getZArcPoint(currPos, nextPos, Z_CLEARANCE);
                 poses = moveC(ur5, poses, rot, arc, nextPos);
-                % Draw inner curve of nine
-                currPos = nextPos;
-                nextPos(2) = nextPos(2) - CHAR_WIDTH + 2 * CHAR_SIDE_PADDING;
-                arc = getXArcPoint(currPos, nextPos, CHAR_HEIGHT / 4);
-                poses = moveC(ur5, poses, rot, arc, nextPos);
                 % Draw top curve of nine
                 currPos = nextPos;
-                nextPos(2) = nextPos(2) + CHAR_WIDTH - 2 * CHAR_SIDE_PADDING;
+                nextPos(2) = nextPos(2) - CHAR_WIDTH + 2 * CHAR_SIDE_PADDING;
                 arc = getXArcPoint(currPos, nextPos, -CHAR_HEIGHT / 4);
                 poses = moveC(ur5, poses, rot, arc, nextPos);
-                % Draw outer curve of nine
+                % Draw inner curve of nine
                 currPos = nextPos;
+                nextPos(2) = nextPos(2) + CHAR_WIDTH - 2 * CHAR_SIDE_PADDING;
+                arc = getXArcPoint(currPos, nextPos, CHAR_HEIGHT / 4);
+                poses = moveC(ur5, poses, rot, arc, nextPos);
+                % Draw outer curve of nine
                 nextPos = [ charEdgePos(1) + CHAR_TOP_PADDING + CHAR_HEIGHT, charEdgePos(2) + CHAR_SIDE_PADDING, PLANE_Z_OFFSET ];
                 arc = [ nextPos(1) - CHAR_HEIGHT / 4, nextPos(2) + CHAR_WIDTH / 3, PLANE_Z_OFFSET ];
                 poses = moveC(ur5, poses, rot, arc, nextPos);
