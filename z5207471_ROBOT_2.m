@@ -28,11 +28,11 @@ function z5207471_ROBOT_2(paperPose, digits)
     
     homePos = [ paperPose(1), paperPose(2), PLANE_Z_OFFSET + Z_CLEARANCE ];
 
-    currPos = homePos;
-    nextPos = [ currPos(1), currPos(2) + PAPER_MARGIN, PLANE_Z_OFFSET];
-    charEdgePos = nextPos;
+    poses = moveL(ur5, [], rot, homePos);
 
-    poses = ur5.movel([ currPos, TOOL_DOWN_POSE ]);
+    currPos = homePos;
+    nextPos = [];
+    charEdgePos = [ currPos(1), currPos(2) + PAPER_MARGIN, PLANE_Z_OFFSET];
 
     for i = 1 : strlength(digits)
         disp("Now writing: " + digits(i));
