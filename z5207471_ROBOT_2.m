@@ -32,7 +32,7 @@ function z5207471_ROBOT_2(paperPose, digits)
     
     homePos = [ paperPose(1) - PAPER_WIDTH, paperPose(2), PLANE_Z_OFFSET + Z_CLEARANCE ];
 
-    poses = moveL(ur5, paperPose, [], rot, homePos);
+    poses = moveJ(ur5, paperPose, [], rot, homePos);
 
     currPos = homePos;
     nextPos = [];
@@ -232,30 +232,32 @@ function z5207471_ROBOT_2(paperPose, digits)
     ur5.drawPath(poses);
 
     ur5.close();
+
+    disp("Program Complete");
 end
 
 function newPoses = moveL(ur5, paperPose, poses, rotation, p)
     TOOL_DOWN_POSE = [2.2214, -2.2214, 0.00];
     disp("Linear move: " + p(1) + ", " + p(2) + ", " + p(3));
-    pRot = [ p - paperPose(1), p - paperPose(2), p(3) ] * rot + [ paperPose(1), paperPose(2), 0 ];
+    pRot = [ p(1) - paperPose(1), p(2) - paperPose(2), p(3) ] * rotation + [ paperPose(1), paperPose(2), 0 ];
     newPoses = cat(1, poses, ur5.movel([ pRot, TOOL_DOWN_POSE ]));
 end
 
 function newPoses = moveJ(ur5, paperPose, poses, rotation, p)
     TOOL_DOWN_POSE = [2.2214, -2.2214, 0.00];
     disp("Joint move: " + p(1) + ", " + p(2) + ", " + p(3));
-    pRot = [ p - paperPose(1), p - paperPose(2), p(3) ] * rot + [ paperPose(1), paperPose(2), 0 ];
+    pRot = [ p(1) - paperPose(1), p(2) - paperPose(2), p(3) ] * rotation + [ paperPose(1), paperPose(2), 0 ];
     newPoses = cat(1, poses, ur5.movej([ pRot, TOOL_DOWN_POSE ]));
 end
 
 function newPoses = moveC(ur5, paperPose, poses, rotation, p2, p3)
     TOOL_DOWN_POSE = [2.2214, -2.2214, 0.00];
     TOOL_ACC = 0.08; % Tool Acceleration
-    TOOL_VEL = 0.08; % Tool Velocity
+    TOOL_VEL = 0.15; % Tool Velocity
     BLEND_R = 0.001; % Blend radius
     disp("Circular move: point 2: " + p2(1) + ", " + p2(2) + ", " + p2(3) + " point 3: " + p3(1) + ", " + p3(2) + ", " + p3(3));
-    p2Rot = [ p2 - paperPose(1), p2 - paperPose(2), p2(3) ] * rot + [ paperPose(1), paperPose(2), 0 ];
-    p3Rot = [ p3 - paperPose(1), p3 - paperPose(2), p3(3) ] * rot + [ paperPose(1), paperPose(2), 0 ];
+    p2Rot = [ p2(1) - paperPose(1), p2(2) - paperPose(2), p2(3) ] * rotation + [ paperPose(1), paperPose(2), 0 ];
+    p3Rot = [ p3(1) - paperPose(1), p3(2) - paperPose(2), p3(3) ] * rotation + [ paperPose(1), paperPose(2), 0 ];
     newPoses = cat(1, poses, ur5.movec([ p2Rot, TOOL_DOWN_POSE ], [ p3Rot, TOOL_DOWN_POSE ], 'pose', TOOL_ACC, TOOL_VEL, BLEND_R));
 end
 
